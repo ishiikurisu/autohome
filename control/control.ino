@@ -1,15 +1,19 @@
 #define LED 13
 
+String received;
+bool transmitted;
+
 void setup()
 {
     Serial.begin(9600);
     pinMode(LED, OUTPUT);
+    received.reserve(256);
+    transmitted = false;
 }
 
 void loop()
 {
-    if (Serial.available() > 0) {
-        String received = Serial.readString();
+    if (transmitted) {
         String toSend = "what?";
         received.trim();
 
@@ -22,6 +26,21 @@ void loop()
             digitalWrite(LED, LOW);
         }
 
-        Serial.println(toSend);
+        long written = Serial.println(toSend);
+
+        received = "";
+        transmitted = false;
+    }
+}
+
+void serialEvent()
+{
+    while (Serial.available() > 0)
+    {
+        char incoming = (char) Serial.read();
+        received += incoming;
+        if (incoming == '\n') {
+            transmitted = true;
+        }
     }
 }
