@@ -8,8 +8,20 @@ void setup()
 
 void loop()
 {
-    digitalWrite(LED, HIGH);
-    delay(500);
-    digitalWrite(LED, LOW);
-    delay(500);
+    if (Serial.available() > 0) {
+        String received = Serial.readString();
+        String toSend = "what?";
+        received.trim();
+
+        if (received.equals("/on")) {
+            toSend = "turning on";
+            digitalWrite(LED, HIGH);
+        }
+        else if (received.equals("/off")) {
+            toSend = "turning off";
+            digitalWrite(LED, LOW);
+        }
+
+        Serial.println(toSend);
+    }
 }
